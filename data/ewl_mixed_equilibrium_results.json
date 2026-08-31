@@ -1,0 +1,71 @@
+{
+  "payoffs": {
+    "T": 5.0,
+    "R": 3.0,
+    "P": 1.0,
+    "S": 0.0
+  },
+  "haar_equilibrium_value": 2.25,
+  "classical_nash": 1.0,
+  "correlated_equilibrium": 1.0,
+  "ewl_restricted_pure": 3.0,
+  "fraction_of_cooperative_gain": 0.625,
+  "sweep": [
+    {
+      "gamma": 0.0,
+      "C": 1.5,
+      "D": 3.0,
+      "Q": 1.5,
+      "exploitability": 1.5,
+      "is_equilibrium": false
+    },
+    {
+      "gamma": 0.261799,
+      "C": 1.550240474,
+      "D": 2.949759526,
+      "Q": 1.550240474,
+      "exploitability": 1.399519052838329,
+      "is_equilibrium": false
+    },
+    {
+      "gamma": 0.523599,
+      "C": 1.6875,
+      "D": 2.8125,
+      "Q": 1.6875,
+      "exploitability": 1.1250000000000002,
+      "is_equilibrium": false
+    },
+    {
+      "gamma": 0.785398,
+      "C": 1.875,
+      "D": 2.625,
+      "Q": 1.875,
+      "exploitability": 0.7500000000000002,
+      "is_equilibrium": false
+    },
+    {
+      "gamma": 1.047198,
+      "C": 2.0625,
+      "D": 2.4375,
+      "Q": 2.0625,
+      "exploitability": 0.37500000000000017,
+      "is_equilibrium": false
+    },
+    {
+      "gamma": 1.308997,
+      "C": 2.199759526,
+      "D": 2.300240474,
+      "Q": 2.199759526,
+      "exploitability": 0.10048094716167118,
+      "is_equilibrium": false
+    },
+    {
+      "gamma": 1.570796,
+      "C": 2.25,
+      "D": 2.25,
+      "Q": 2.25,
+      "exploitability": 5.624099184981966e-33,
+      "is_equilibrium": true
+    }
+  ]
+}

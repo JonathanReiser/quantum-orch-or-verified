@@ -1,0 +1,147 @@
+{
+  "$schema_note": "Every number quoted in this repository's README files must trace to a command that regenerates it. check_ledger.py enforces two things: (1) each entry's command, run fresh, byte-matches the committed output file, and (2) the doc_claims listed for every entry actually appear verbatim in the named documentation files.",
+  "entries": [
+    {
+      "id": "snapshot-classical-benchmark",
+      "description": "Classical baselines (constant/ridge) predicting DAO proposal YES share.",
+      "reproducible": true,
+      "committed_output": "data/benchmark_classical_results.json",
+      "sha256": "1391c9f3dc63c5d3def0949c5996cbfd9ddeea432aff63149ff1bdddc178750d",
+      "doc_claims": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "(10.44pp MAE)"
+          ]
+        },
+        {
+          "file": "dao_governance/README.md",
+          "must_contain": [
+            "| **constant (train median)** | **10.44** | 26.73 | \u22120.125 |",
+            "| ridge on pre-vote features | 11.20 | 25.04 | 0.013 |"
+          ]
+        }
+      ],
+      "command": [
+        "python3",
+        "-m",
+        "dao_governance.benchmark_snapshot_real",
+        "--data",
+        "data/snapshot_dao_dataset.json",
+        "--out",
+        "{tmp}"
+      ]
+    },
+    {
+      "id": "contestedness-benchmark",
+      "description": "Contestedness classification, including the within-DAO Simpson's-paradox control.",
+      "reproducible": true,
+      "committed_output": "data/benchmark_contestedness_results.json",
+      "sha256": "439777454cb19e2f474db3091b49605c8a983d2fc38eb6245467135ab9ff1dd8",
+      "doc_claims": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "AUC 0.660, 95%"
+          ]
+        },
+        {
+          "file": "dao_governance/README.md",
+          "must_contain": [
+            "| **all features** | **0.660** | [0.555, 0.763] | 0.0010 |",
+            "**Median within-DAO AUC: 0.416**"
+          ]
+        }
+      ],
+      "command": [
+        "python3",
+        "-m",
+        "dao_governance.benchmark_contestedness",
+        "--data",
+        "data/snapshot_dao_dataset.json",
+        "--out",
+        "{tmp}"
+      ]
+    },
+    {
+      "id": "ewl-equilibrium",
+      "description": "EWL restricted/full-SU(2) equilibrium search and the derived entanglement threshold.",
+      "reproducible": true,
+      "committed_output": "data/ewl_equilibrium_results.json",
+      "sha256": "1e1525ca64d227c91068d72a30df05658299d1f05a64bc7ef614053408992029",
+      "doc_claims": [
+        {
+          "file": "quantum_games/README.md",
+          "must_contain": [
+            "\u03b3_c = arccos(\u221a(3/5)) \u2248 0.684719 rad \u2248 39.23\u00b0"
+          ]
+        },
+        {
+          "file": "README.md",
+          "must_contain": [
+            "\u03b3_c \u2248 0.6847 rad"
+          ]
+        }
+      ],
+      "command": [
+        "python3",
+        "-m",
+        "quantum_games.ewl_equilibrium",
+        "--out",
+        "{tmp}"
+      ]
+    },
+    {
+      "id": "ewl-mixed-equilibrium",
+      "description": "Closed-form Haar-uniform equilibrium value on the full SU(2) game.",
+      "reproducible": true,
+      "committed_output": "data/ewl_mixed_equilibrium_results.json",
+      "sha256": "2c5cd21c8f1d6871477be1c69b190413fe5d3348b407547fbb9d0980d127ce1c",
+      "doc_claims": [
+        {
+          "file": "quantum_games/README.md",
+          "must_contain": [
+            "| **full SU(2) Haar equilibrium** | **2.25** |",
+            "**62.5%**"
+          ]
+        },
+        {
+          "file": "README.md",
+          "must_contain": [
+            "worth 62.5% of"
+          ]
+        }
+      ],
+      "command": [
+        "python3",
+        "-m",
+        "quantum_games.ewl_mixed_equilibrium",
+        "--out",
+        "{tmp}"
+      ]
+    },
+    {
+      "id": "snapshot-dataset",
+      "description": "The real Snapshot DAO dataset itself.",
+      "reproducible": false,
+      "committed_output": "data/snapshot_dao_dataset.json",
+      "sha256": "32e192e0f2b34dc860300bcea0c0eb03b348ae12459840df8b23e4ccb47ab11f",
+      "doc_claims": [
+        {
+          "file": "README.md",
+          "must_contain": [
+            "6,242,940 vote records"
+          ]
+        },
+        {
+          "file": "dao_governance/README.md",
+          "must_contain": [
+            "| Kept (settled tally, unambiguous binary ballot) | **905** |",
+            "| Vote records across kept proposals | **6,242,940** |"
+          ]
+        }
+      ],
+      "note": "Fetched live from the Snapshot GraphQL hub, which requires network access and returns whatever the hub currently holds \u2014 not expected to be byte-identical across runs. This entry pins the hash of the committed snapshot only, so a hand-edit of the file is still detectable."
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "gammas": [
+    {
+      "space": "restricted",
+      "gamma": 0.0,
+      "grid_size": 861,
+      "pure_nash_count": 441,
+      "best_nash_symmetric_payoff": 1.0,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 2.0,
+        "best_deviation_gain_B": 2.0,
+        "is_nash": false,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "restricted",
+      "gamma": 0.314159,
+      "grid_size": 861,
+      "pure_nash_count": 441,
+      "best_nash_symmetric_payoff": 1.0,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 1.522542,
+        "best_deviation_gain_B": 1.522542,
+        "is_nash": false,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "restricted",
+      "gamma": 0.628319,
+      "grid_size": 861,
+      "pure_nash_count": 42,
+      "best_nash_symmetric_payoff": 2.5,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 0.272542,
+        "best_deviation_gain_B": 0.272542,
+        "is_nash": false,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "restricted",
+      "gamma": 0.942478,
+      "grid_size": 861,
+      "pure_nash_count": 1,
+      "best_nash_symmetric_payoff": 3.0,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": -1.1e-05,
+        "best_deviation_gain_B": -1.1e-05,
+        "is_nash": true,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "restricted",
+      "gamma": 1.256637,
+      "grid_size": 861,
+      "pure_nash_count": 1,
+      "best_nash_symmetric_payoff": 3.0,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": -1.5e-05,
+        "best_deviation_gain_B": -1.5e-05,
+        "is_nash": true,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "restricted",
+      "gamma": 1.570796,
+      "grid_size": 861,
+      "pure_nash_count": 1,
+      "best_nash_symmetric_payoff": 3.0,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": -1.7e-05,
+        "best_deviation_gain_B": -1.7e-05,
+        "is_nash": true,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "full",
+      "gamma": 0.0,
+      "grid_size": 2197,
+      "pure_nash_count": 28561,
+      "best_nash_symmetric_payoff": 1.0,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 2.0,
+        "best_deviation_gain_B": 2.0,
+        "is_nash": false,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "full",
+      "gamma": 0.314159,
+      "grid_size": 2197,
+      "pure_nash_count": 4394,
+      "best_nash_symmetric_payoff": 1.188208,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 1.999917,
+        "best_deviation_gain_B": 1.999917,
+        "is_nash": false,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "full",
+      "gamma": 0.628319,
+      "grid_size": 2197,
+      "pure_nash_count": 0,
+      "best_nash_symmetric_payoff": null,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 1.999858,
+        "best_deviation_gain_B": 1.999858,
+        "is_nash": false,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "full",
+      "gamma": 0.942478,
+      "grid_size": 2197,
+      "pure_nash_count": 0,
+      "best_nash_symmetric_payoff": null,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 1.999846,
+        "best_deviation_gain_B": 1.999846,
+        "is_nash": false,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "full",
+      "gamma": 1.256637,
+      "grid_size": 2197,
+      "pure_nash_count": 0,
+      "best_nash_symmetric_payoff": null,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 1.999836,
+        "best_deviation_gain_B": 1.999836,
+        "is_nash": false,
+        "samples": 60000
+      }
+    },
+    {
+      "space": "full",
+      "gamma": 1.570796,
+      "grid_size": 2197,
+      "pure_nash_count": 0,
+      "best_nash_symmetric_payoff": null,
+      "QQ": {
+        "base_payoff": [
+          3.0,
+          3.0
+        ],
+        "best_deviation_gain_A": 1.999832,
+        "best_deviation_gain_B": 1.999832,
+        "is_nash": false,
+        "samples": 60000
+      }
+    }
+  ],
+  "correlated_equilibrium": {
+    "distribution": {
+      "CC": 0.0,
+      "CD": -0.0,
+      "DC": -0.0,
+      "DD": 1.0
+    },
+    "payoff_A": 1.0,
+    "payoff_B": 1.0
+  },
+  "critical_gamma": {
+    "analytic_rad": 0.684719203,
+    "analytic_deg": 39.23152,
+    "sin2_gamma_c": 0.4,
+    "numeric_rad": 0.684719203,
+    "abs_error": 2.0412294077232218e-10
+  }
+}

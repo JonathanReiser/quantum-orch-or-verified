@@ -1,0 +1,119 @@
+{
+  "split": {
+    "n_total": 905,
+    "n_train": 633,
+    "n_test": 272,
+    "train_base_rate": 0.3001579778830964,
+    "test_base_rate": 0.18382352941176472,
+    "contested_band": [
+      5.0,
+      95.0
+    ]
+  },
+  "results": {
+    "base_rate_constant": {
+      "auc": 0.5,
+      "brier": 0.16356614334749572,
+      "log_loss": 0.5125156700925423
+    },
+    "per_dao_base_rate": {
+      "auc": 0.6284684684684685,
+      "brier": 0.14068609027858914,
+      "log_loss": 0.44754473438288755,
+      "auc_ci95": [
+        0.527,
+        0.719
+      ],
+      "auc_p_gt_0.5": 0.0095
+    },
+    "logistic_dao_only": {
+      "auc": 0.6284684684684685,
+      "brier": 0.1406949338127689,
+      "log_loss": 0.447636062410142
+    },
+    "logistic_all_features": {
+      "auc": 0.6596396396396397,
+      "brier": 0.13642618792919659,
+      "log_loss": 0.445366183235548,
+      "auc_ci95": [
+        0.555,
+        0.763
+      ],
+      "auc_p_gt_0.5": 0.001
+    },
+    "logistic_content_only": {
+      "auc": 0.6512612612612613,
+      "brier": 0.14539249806859253,
+      "log_loss": 0.4769586314841856,
+      "auc_ci95": [
+        0.547,
+        0.755
+      ],
+      "auc_p_gt_0.5": 0.001
+    },
+    "logistic_venue_only": {
+      "auc": 0.6507207207207207,
+      "brier": 0.1372708147034152,
+      "log_loss": 0.440247688314384
+    }
+  },
+  "within_dao": {
+    "Uniswap": {
+      "n": 123,
+      "n_test": 37,
+      "contested_rate": 0.17886178861788618,
+      "content_only_auc": 0.516,
+      "median_duration_contested": 5.0,
+      "median_duration_uncontested": 5.0
+    },
+    "Arbitrum": {
+      "n": 344,
+      "n_test": 104,
+      "contested_rate": 0.4011627906976744,
+      "content_only_auc": 0.416,
+      "median_duration_contested": 7.0,
+      "median_duration_uncontested": 7.0
+    },
+    "Optimism": {
+      "n": 88,
+      "n_test": 27,
+      "contested_rate": 0.4772727272727273,
+      "content_only_auc": 0.541,
+      "median_duration_contested": 12.083333333333332,
+      "median_duration_uncontested": 6.958333333333333
+    },
+    "Gitcoin": {
+      "n": 139,
+      "n_test": 42,
+      "contested_rate": 0.1223021582733813,
+      "content_only_auc": 0.188,
+      "median_duration_contested": 7.0,
+      "median_duration_uncontested": 7.0
+    },
+    "Aave": {
+      "n": 211,
+      "n_test": 64,
+      "contested_rate": 0.0995260663507109,
+      "content_only_auc": 0.137,
+      "median_duration_contested": 4.96505787037037,
+      "median_duration_uncontested": 3.0
+    }
+  },
+  "coefficients": {
+    "dao_uniswap": -0.4069,
+    "dao_arbitrum": 0.5902,
+    "dao_optimism": 0.2957,
+    "dao_gitcoin": -0.3392,
+    "dao_aave": -0.3362,
+    "log_body_len": -0.0082,
+    "title_len": -0.1179,
+    "duration_days": 0.3593,
+    "n_choices": -0.0023,
+    "has_quorum": -0.14,
+    "has_abstain": -0.0023,
+    "prior_dao_yes": -0.1015,
+    "prior_dao_n": -0.1907,
+    "prior_dao_contested": -0.487,
+    "prior_dao_contested_n": -0.1907
+  }
+}
