@@ -142,6 +142,36 @@
         }
       ],
       "note": "Fetched live from the Snapshot GraphQL hub, which requires network access and returns whatever the hub currently holds \u2014 not expected to be byte-identical across runs. This entry pins the hash of the committed snapshot only, so a hand-edit of the file is still detectable."
+    },
+    {
+      "id": "ewl-hardware-prediction",
+      "description": "EWL hardware threshold prediction and protocol, pinned BEFORE any hardware run. The commit timestamp is what makes the later measurement a test rather than a description.",
+      "reproducible": true,
+      "committed_output": "data/ewl_prediction.json",
+      "sha256": "0cc7e8af8dfee451ee971c3f7db55a9cb9fd77ab432bdcf48c32c83107597d8e",
+      "doc_claims": [
+        {
+          "file": "EWL_HARDWARE_PREREGISTRATION.md",
+          "must_contain": [
+            "gamma_c = 0.684719203 rad",
+            "**Predicted crossing: 0.684719203 rad.**",
+            "**PASS if |measured \u2212 0.684719203| <= 0.026573 rad.**",
+            "3 * sigma_shot        = 0.016573 rad",
+            "systematic budget     = 0.010000 rad",
+            "| 2e-2 | 0.019214 |",
+            "| estimator | last sign change of payoff(dev,Q) \u2212 payoff(Q,Q), linearly interpolated |"
+          ]
+        }
+      ],
+      "command": [
+        "python3",
+        "-m",
+        "quantum_games.ewl_prediction",
+        "--two-qubit-error",
+        "8e-3",
+        "--out",
+        "{tmp}"
+      ]
     }
   ]
 }
