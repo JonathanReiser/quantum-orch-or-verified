@@ -49,8 +49,10 @@ tolerance             = 0.026573 rad
 ```
 
 **The systematic allowance is an assumption, not a measurement.** See amendment 1.
-It is retained at its registered value so the criterion is not loosened, and
-`quantum_games.ewl_device_bias` shows it stays a conservative upper bound:
+It is retained at its registered value so the criterion is not loosened.
+
+`quantum_games.ewl_device_bias` computes three **illustrative** channels. They
+are not a model of the target device and **not an upper bound on its error**:
 
 | channel | bias at 3e-3 | bias at 8e-3 | bias at 2e-2 |
 |---|---:|---:|---:|
@@ -58,10 +60,23 @@ It is retained at its registered value so the criterion is not loosened, and
 | amplitude damping | -0.000145 | -0.000260 | -0.000535 |
 | readout | -0.000688 | -0.001708 | -0.004155 |
 
-The largest simulated bias on any channel is **0.004155 rad**, so the 0.010 rad
-allowance is 2.4x that. The depolarizing row is flat because it equals the
-41-point grid's own discretization bias: a depolarizing channel cannot move this
-crossing at all (amendment 1).
+The largest simulated bias across these three channels is **0.004155 rad**. That
+number bounds nothing. What these simulations establish is one negative result
+and nothing more: **the mechanism the original registration invoked does not
+produce a shift.** The depolarizing row is flat because it equals the 41-point
+grid's own discretization bias — a depolarizing channel cannot move this crossing
+at all (amendment 1).
+
+What they omit is most of what a real device does: coherent and calibration
+errors, crosstalk, qubit-dependent and pair-dependent error rates, drift between
+calibration and execution, leakage, correlated readout error, and every gate the
+transpiler introduces when it maps this circuit onto physical qubits and a native
+basis. Each channel is applied uniformly to an idealised two-qubit circuit with
+ideal one-qubit gates. A real device can therefore bias the crossing by **more**
+than 0.004155 rad, and in either direction.
+
+So the 0.010 rad allowance is not justified by these simulations. It is a
+declared assumption whose only support is that it was registered before the run.
 
 ## Pass criterion
 
@@ -95,6 +110,26 @@ any hardware use.
 | calibration snapshot | the backend properties are fetched and committed **before** submission, and the reported median two-qubit error is taken from that snapshot. |
 | permitted discards | only for a documented *infrastructure* failure that produces no usable counts: job error, cancellation, timeout, or a returned shot count differing from 2 x 8192. A discarded job is recorded with its job id and the reason. A run that returns counts is never discarded, whatever it shows. |
 | forbidden | re-running after seeing a result, selecting among completed runs, changing the device after submission, or post-hoc recalibration of the budget. |
+
+### Execution stack, frozen
+
+A result is only reproducible if the circuit that ran can be rebuilt. These are
+fixed now; a change to any of them is a different experiment and requires
+re-registration.
+
+| item | commitment |
+|---|---|
+| qiskit version | the exact `qiskit` and `qiskit-ibm-runtime` versions are recorded in the calibration snapshot before submission and pinned in `requirements.txt`. Transpilation is performed with those versions. |
+| optimization level | `optimization_level=1`. Chosen because higher levels may re-synthesise the J / J-dagger pair, and the prediction is about *this* circuit's crossing, not an algebraically equivalent rewrite. |
+| transpiler seed | `seed_transpiler=20260914`, fixed. Without it layout and routing are non-deterministic and the executed circuit is not reproducible. |
+| physical qubit layout | `initial_layout` is fixed **before** submission to the connected pair with the lowest two-qubit gate error in the calibration snapshot, recorded as explicit physical qubit indices. Ties broken by lower sum of single-qubit errors, then by lower qubit index. |
+| selected pair error | the two-qubit gate error **of that chosen pair**, from that snapshot, is recorded and is the number compared against the 8e-3 eligibility gate. The device-level median is used only for ranking devices, never as the eligibility figure. |
+| dynamical decoupling / error suppression | none. No error mitigation, no measurement-error mitigation, no post-selection. Raw counts only. |
+
+The distinction in the last two rows matters: a device can advertise a good
+median while the pair actually used is worse. The gate that carries this
+experiment is the one on the selected pair, so that is the error the registration
+is conditioned on.
 
 ## Scope
 
@@ -162,7 +197,8 @@ amplitude damping by at most 0.000535 rad, readout error by at most 0.004155 rad
    asserted.
 2. The systematic allowance is **relabelled as an assumption**. Its value is
    unchanged at 0.010 rad, so the criterion is not loosened. The simulation shows
-   it is 2.4x the largest bias found on any channel.
+   these simulations do not justify it: they are three illustrative channels on
+   an idealised circuit, not a device model and not a bound.
 3. The pass criterion is now **symmetric and exhaustive**, and the vague
    "materially above" clause is removed. Its only justification was the
    one-directional bias claim withdrawn above.
@@ -177,12 +213,12 @@ amplitude damping by at most 0.000535 rad, readout error by at most 0.004155 rad
 
 ## What remains an assumption
 
-The 0.010 rad allowance is now the least-supported number in this document. The
-evidence assembled here suggests a much smaller value would be defensible — the
-largest simulated bias is 0.004155 rad, and the most physically relevant channel
-moves the crossing not at all. Retaining 0.010 rad makes the criterion **more
-permissive than the evidence requires**, which is a limitation of this
-registration, not a strength. It is retained rather than tightened only because
+The 0.010 rad allowance is the least-supported number in this document, and the
+simulations do not repair that. They rule out one mechanism; they do not
+characterise the device. A real backend can bias this crossing by more than any
+figure in the table above, through channels not simulated here — coherent error,
+crosstalk, drift, transpiled gate depth — so 0.010 rad is neither demonstrably
+conservative nor demonstrably adequate. It is retained rather than tightened only because
 lowering a registered tolerance is still a change to a registered criterion, and
 the conservative reading is that a pre-run change should not be able to cut
 either way at the author's discretion. A future registration should derive the

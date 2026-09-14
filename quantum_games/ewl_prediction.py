@@ -87,8 +87,9 @@ def main():
 
     # The systematic allowance is an ASSUMPTION, not a measurement. Amendment 1
     # withdrew the simulated table it was originally fitted to. It is retained at
-    # its registered value so the criterion is not loosened, and the simulation
-    # below shows it remains a conservative upper bound on every channel tried.
+    # its registered value so the criterion is not loosened. The simulated
+    # channels below do NOT justify it: they are three illustrative channels on an
+    # idealised circuit, not a device model and not a bound on real hardware.
     systematic = 0.002 + 1.0 * a.two_qubit_error
     tolerance = 3 * sigma + systematic
 
@@ -114,6 +115,17 @@ def main():
                 "selected_at_gamma": 0.0,
                 "why": "at gamma=pi/2 the best reply to Q is Q, so an argmax taken "
                        "there returns Q and the deviation gain is identically zero",
+            },
+            "execution_stack_frozen": {
+                "optimization_level": 1,
+                "seed_transpiler": 20260914,
+                "initial_layout": "fixed before submission to the lowest-two-qubit-error "
+                                  "connected pair in the calibration snapshot, recorded "
+                                  "as explicit physical qubit indices",
+                "eligibility_error_is": "the two-qubit gate error of the SELECTED PAIR, "
+                                        "not the device median",
+                "error_mitigation": "none; raw counts, no post-selection",
+                "versions_recorded_in": "calibration snapshot committed before submission",
             },
             "gamma_range": [0.0, round(float(np.pi / 2), 9)],
             "gamma_points": PLANNED_POINTS,
@@ -142,9 +154,20 @@ def main():
             "simulated_bias_by_channel": bias_channels,
             "discretization_bias_rad": round(grid_bias, 9),
             "largest_simulated_bias_rad": round(worst_bias, 9),
-            "simulation_note": "computed by quantum_games.ewl_device_bias, a "
-                               "density-matrix simulation of the same circuit, sweep "
-                               "and estimator. No sampling, so no shot-noise floor.",
+            "simulation_scope": {
+                "purpose": "rule out the mechanism the original registration invoked; "
+                           "nothing more",
+                "is_an_upper_bound_on_hardware_error": False,
+                "omits": ["coherent and calibration error", "crosstalk",
+                          "pair-dependent and qubit-dependent error rates",
+                          "drift between calibration and execution", "leakage",
+                          "correlated readout error",
+                          "gates introduced by transpilation to a native basis"],
+                "note": "each channel is applied uniformly to an idealised two-qubit "
+                        "circuit with ideal one-qubit gates. A real device can bias "
+                        "the crossing by MORE than any figure here, in either "
+                        "direction.",
+            },
             "superseded_table": {
                 "values_rad": [0.003986, 0.007384, 0.019214],
                 "status": "withdrawn -- unreproducible",
@@ -175,8 +198,10 @@ def main():
                              "would have justified an asymmetric rule.",
             "no_sign_change_is": "FAIL",
             "systematic_is_an_assumption": True,
-            "systematic_vs_largest_simulated_bias": round(
-                systematic / worst_bias, 2),
+            "systematic_justified_by_simulation": False,
+            "systematic_support": "registered before the run; not derived from the "
+                                  "illustrative channels, which do not bound device "
+                                  "error",
         },
         "declared": {
             "measurement_performed": False,

@@ -148,20 +148,19 @@
       "description": "EWL hardware threshold prediction and protocol, pinned BEFORE any hardware run. The commit timestamp is what makes the later measurement a test rather than a description.",
       "reproducible": true,
       "committed_output": "data/ewl_prediction.json",
-      "sha256": "1fd55fcbfa65c425e11632f8501d2c2d3b916797659bacb81fa3de476af034d3",
+      "sha256": "0bc082664c50a93d541f312071bbf26867349a95b3d8bc589ef32a4ea0d4bcf7",
       "doc_claims": [
         {
           "file": "EWL_HARDWARE_PREREGISTRATION.md",
           "must_contain": [
             "gamma_c = 0.684719203 rad",
-            "**Predicted crossing: 0.684719203 rad.**",
             "**PASS if and only if `|measured - 0.684719203| <= 0.026573` rad.**",
-            "3 * sigma_shot        = 0.016573 rad",
-            "systematic allowance  = 0.010000 rad",
             "**The systematic allowance is an assumption, not a measurement.**",
+            "not an upper bound on its error",
+            "`seed_transpiler=20260914`, fixed",
+            "the two-qubit gate error **of that chosen pair**",
             "the first eligible run is binding",
-            "weak (non-strict) Nash equilibrium",
-            "| estimator | last sign change of payoff(dev,Q) \u2212 payoff(Q,Q), linearly interpolated |"
+            "weak (non-strict) Nash equilibrium"
           ]
         }
       ],
@@ -180,13 +179,13 @@
       "description": "Simulated device bias of the EWL crossing estimator, replacing the withdrawn literals 0.003986 / 0.007384 / 0.019214 (amendment 1).",
       "reproducible": true,
       "committed_output": "data/ewl_device_bias.json",
-      "sha256": "ace2f87e06f14d615d66d0db5f7b020aabfbc8492cc17a4adab596017541d950",
-      "note": "Density-matrix simulation, no sampling. Key finding: a depolarizing channel rescales the gain by (1-q) and cannot move its zero crossing, so the registration's original one-directional bias mechanism does not hold.",
+      "sha256": "31db6db963f7474b8ba8c411fb20a2014dad4a2d15287a4d2751333a918fa2a1",
+      "note": "Density-matrix simulation, no sampling. Key finding: a depolarizing channel rescales the gain by (1-q) and cannot move its zero crossing, so the registration's original one-directional bias mechanism does not hold. These channels are ILLUSTRATIVE and bound nothing about real hardware error.",
       "doc_claims": [
         {
           "file": "EWL_HARDWARE_PREREGISTRATION.md",
           "must_contain": [
-            "The largest simulated bias on any channel is **0.004155 rad**"
+            "That\nnumber bounds nothing."
           ]
         }
       ],

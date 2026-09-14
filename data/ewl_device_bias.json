@@ -47,7 +47,9 @@
   "estimator": "last sign change of payoff(dev,Q) - payoff(Q,Q), linearly interpolated between adjacent grid points",
   "finding": {
     "depolarizing_cannot_move_the_crossing": true,
+    "is_an_upper_bound_on_hardware_error": false,
     "largest_bias_any_channel_rad": 0.004155495,
+    "scope": "illustrative channels on an idealised circuit; omits coherent error, crosstalk, pair-dependent rates, drift, leakage, correlated readout, and transpiled gate depth. A real device can bias the crossing by more than any figure here.",
     "supersedes": "the unreproducible table 0.003986 / 0.007384 / 0.019214 rad",
     "why": "a depolarizing channel maps both arms by the same affine rule, p -> (1-q)p + q*uniform, so the gain becomes (1-q)*gain_ideal. A positive rescaling cannot move a zero crossing. The residual equals the discretization bias of the 41-point grid."
   },

@@ -32,6 +32,17 @@ readout error -- do move the crossing, but by far less than the registered table
 claimed. Those are computed here too so the claim is checkable rather than
 asserted.
 
+SCOPE, because these numbers are easy to over-read: they are ILLUSTRATIVE and
+they bound nothing. Each channel is applied uniformly to an idealised two-qubit
+circuit with ideal one-qubit gates. Omitted are coherent and calibration error,
+crosstalk, pair- and qubit-dependent rates, drift between calibration and
+execution, leakage, correlated readout error, and every gate the transpiler adds
+when mapping to physical qubits and a native basis. A real device can bias this
+crossing by MORE than any figure computed here, in either direction. These
+simulations establish one negative result -- the registration's original
+mechanism does not produce a shift -- and must not be cited as support for the
+size of the systematic allowance.
+
 Usage: python3 -m quantum_games.ewl_device_bias --out data/ewl_device_bias.json
 """
 import argparse
@@ -161,6 +172,11 @@ def main():
                    "equals the discretization bias of the 41-point grid.",
             "largest_bias_any_channel_rad": round(worst, 9),
             "supersedes": "the unreproducible table 0.003986 / 0.007384 / 0.019214 rad",
+            "is_an_upper_bound_on_hardware_error": False,
+            "scope": "illustrative channels on an idealised circuit; omits coherent "
+                     "error, crosstalk, pair-dependent rates, drift, leakage, "
+                     "correlated readout, and transpiled gate depth. A real device "
+                     "can bias the crossing by more than any figure here.",
         },
     }
     Path(args.out).write_text(json.dumps(out, indent=2, sort_keys=True) + "\n")

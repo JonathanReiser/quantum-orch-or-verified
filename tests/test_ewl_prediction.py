@@ -120,9 +120,33 @@ def test_depolarizing_noise_cannot_move_the_crossing():
         assert crossing - GAMMA_C == pytest.approx(grid, abs=1e-9)
 
 
-def test_simulated_bias_stays_below_the_systematic_allowance(prediction):
-    allowance = prediction["pass_criterion"]["components"]["systematic_budget_rad"]
-    assert prediction["expected_device_bias"]["largest_simulated_bias_rad"] < allowance
+def test_simulations_are_not_presented_as_a_hardware_bound(prediction):
+    """They rule out one mechanism. They are not a device model, and citing them
+    as support for the size of the allowance would be the same overreach that the
+    withdrawn table represented."""
+    scope = prediction["expected_device_bias"]["simulation_scope"]
+    assert scope["is_an_upper_bound_on_hardware_error"] is False
+    assert "crosstalk" in scope["omits"]
+    assert prediction["pass_criterion"]["systematic_justified_by_simulation"] is False
+
+
+def test_execution_stack_is_frozen(prediction):
+    """A result is reproducible only if the executed circuit can be rebuilt."""
+    stack = prediction["protocol_fixed_in_advance"]["execution_stack_frozen"]
+    assert stack["optimization_level"] == 1
+    assert stack["seed_transpiler"] == 20260914
+    assert "physical qubit indices" in stack["initial_layout"]
+    assert "SELECTED PAIR" in stack["eligibility_error_is"]
+    assert stack["error_mitigation"].startswith("none")
+
+
+def test_registration_freezes_the_transpiler_and_layout():
+    text = open(os.path.join(REPO, "EWL_HARDWARE_PREREGISTRATION.md"),
+                encoding="utf-8").read()
+    for phrase in ("optimization level", "seed_transpiler=20260914",
+                   "physical qubit layout", "selected pair error",
+                   "not an upper bound on its error"):
+        assert phrase in text, f"execution stack lost its commitment: {phrase}"
 
 
 def test_pass_criterion_is_symmetric_and_exhaustive(prediction):
