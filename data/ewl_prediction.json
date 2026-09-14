@@ -12,26 +12,78 @@
     "sd_devQ": 2.449489743
   },
   "expected_device_bias": {
-    "budget_formula": "systematic_rad = 0.002 + 1.0 * two_qubit_error",
-    "direction": "downward: the measured crossing should land AT OR BELOW gamma_c, never materially above it",
-    "measured_in_simulation": {
-      "2q_error_2e-2": 0.019214,
-      "2q_error_3e-3": 0.003986,
-      "2q_error_8e-3": 0.007384
+    "direction": "no direction is predicted. See amendment 1: the original one-directional claim rested on a mechanism that does not hold, so the pass criterion is symmetric.",
+    "discretization_bias_rad": -7.6082e-05,
+    "largest_simulated_bias_rad": 0.004155495,
+    "mechanism": "a depolarizing channel maps BOTH arms by the same affine rule, p -> (1-q)p + q*uniform, so the gain becomes (1-q)*gain_ideal. A positive rescaling cannot move a zero crossing. The earlier claim that the falling (dev,Q) curve is dragged down faster than the flat (Q,Q) curve is wrong: both are pulled toward 2.25 in the same proportion.",
+    "simulated_bias_by_channel": {
+      "amplitude_damping": {
+        "0.003": {
+          "bias_rad": -0.000145063,
+          "crossing_rad": 0.68457414
+        },
+        "0.008": {
+          "bias_rad": -0.00025997,
+          "crossing_rad": 0.684459233
+        },
+        "0.02": {
+          "bias_rad": -0.000535445,
+          "crossing_rad": 0.684183758
+        }
+      },
+      "depolarizing": {
+        "0.003": {
+          "bias_rad": -7.6082e-05,
+          "crossing_rad": 0.684643121
+        },
+        "0.008": {
+          "bias_rad": -7.6082e-05,
+          "crossing_rad": 0.684643121
+        },
+        "0.02": {
+          "bias_rad": -7.6082e-05,
+          "crossing_rad": 0.684643121
+        }
+      },
+      "readout": {
+        "0.003": {
+          "bias_rad": -0.000687994,
+          "crossing_rad": 0.684031209
+        },
+        "0.008": {
+          "bias_rad": -0.001707848,
+          "crossing_rad": 0.683011355
+        },
+        "0.02": {
+          "bias_rad": -0.004155495,
+          "crossing_rad": 0.680563708
+        }
+      }
     },
-    "mechanism": "depolarizing noise pulls both payoff curves toward the uniform-mixture value 2.25. The (dev,Q) curve, which is falling through 3.0 at the threshold, is dragged down faster than the flat (Q,Q) curve, moving the crossing left.",
-    "simulation_note": "isolated at 200k shots per point, so the shot-noise floor (~0.0011 rad) is well below the residual",
-    "systematic_budget_rad": 0.01
+    "simulation_note": "computed by quantum_games.ewl_device_bias, a density-matrix simulation of the same circuit, sweep and estimator. No sampling, so no shot-noise floor.",
+    "superseded_table": {
+      "note": "attributed to simulation at 200k shots per point, but no code produced them and no channel tried here reproduces them; they are 5x to 100x larger than any simulated bias.",
+      "status": "withdrawn -- unreproducible",
+      "values_rad": [
+        0.003986,
+        0.007384,
+        0.019214
+      ]
+    }
   },
   "pass_criterion": {
     "components": {
       "systematic_budget_rad": 0.01,
       "three_sigma_shot_rad": 0.016573
     },
+    "decision_rule": "PASS if and only if |measured - 0.684719203| <= 0.026573 rad. FAIL otherwise, in either direction, including when no sign change is found in the swept range. There is no separate 'materially above' clause: amendment 1 removed the one-directional bias claim that would have justified an asymmetric rule.",
     "design_sigma_rad": 0.005524,
-    "falsified_if": "the measured crossing lies outside the tolerance, lies materially ABOVE gamma_c (the bias direction is predicted), or no sign change is found in the swept range at all",
+    "no_sign_change_is": "FAIL",
     "primary": "|measured - predicted| <= 3*sigma_shot + systematic_budget",
     "rationale": "shot noise alone is NOT the whole error budget: a real device biases the crossing downward by an amount comparable to the 3-sigma shot tolerance. Pre-registering shot noise only would have set a criterion the hardware fails for reasons unrelated to whether the EWL threshold is correct. Both terms are fixed here, in advance, and neither may be widened after the run.",
+    "symmetric": true,
+    "systematic_is_an_assumption": true,
+    "systematic_vs_largest_simulated_bias": 2.41,
     "tolerance_rad": 0.026573,
     "two_qubit_error_assumed": 0.008
   },

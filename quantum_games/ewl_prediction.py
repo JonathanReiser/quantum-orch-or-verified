@@ -9,7 +9,9 @@ Every claim in CORRECTIONS.md failed on exactly that boundary.
 So this file computes, from the payoff matrix alone and with no measurement of
 any kind, everything the hardware run will be judged against:
 
-  * the threshold gamma_c where (Q,Q) becomes a Nash equilibrium
+  * the threshold gamma_c where (Q,Q) becomes a WEAK (non-strict) Nash
+    equilibrium -- at and above gamma_c the best deviation ties with Q at 3.0
+    rather than being strictly beaten
   * which deviating strategy the run must use, and why that one
   * the payoffs and shot-noise spreads expected at the threshold
   * the tolerance, derived from the design rather than chosen
@@ -27,6 +29,7 @@ import numpy as np
 
 from quantum_games.ewl_equilibrium import (
     strategy, entangling_gate, payoff_matrices, PAYOFF_A, Q_STRAT)
+from quantum_games.ewl_device_bias import bias_table, discretization_bias
 
 T, R, P, S = 5.0, 3.0, 1.0, 0.0      # temptation, reward, punishment, sucker
 PLANNED_SHOTS = 8192
@@ -81,8 +84,19 @@ def main():
 
     se = np.sqrt(qq_sd ** 2 + dv_sd ** 2) / np.sqrt(a.shots)
     sigma = float(se / abs(slope))
+
+    # The systematic allowance is an ASSUMPTION, not a measurement. Amendment 1
+    # withdrew the simulated table it was originally fitted to. It is retained at
+    # its registered value so the criterion is not loosened, and the simulation
+    # below shows it remains a conservative upper bound on every channel tried.
     systematic = 0.002 + 1.0 * a.two_qubit_error
     tolerance = 3 * sigma + systematic
+
+    bias_channels = bias_table()
+    grid_bias = discretization_bias()
+    worst_bias = max(abs(entry["bias_rad"])
+                     for channel in bias_channels.values()
+                     for entry in channel.values())
 
     out = {
         "prediction": {
@@ -116,19 +130,28 @@ def main():
                     "so on a noiseless device all shot noise comes from the (dev,Q) arm.",
         },
         "expected_device_bias": {
-            "direction": "downward: the measured crossing should land AT OR BELOW "
-                         "gamma_c, never materially above it",
-            "mechanism": "depolarizing noise pulls both payoff curves toward the "
-                         "uniform-mixture value 2.25. The (dev,Q) curve, which is "
-                         "falling through 3.0 at the threshold, is dragged down faster "
-                         "than the flat (Q,Q) curve, moving the crossing left.",
-            "measured_in_simulation": {"2q_error_3e-3": 0.003986,
-                                       "2q_error_8e-3": 0.007384,
-                                       "2q_error_2e-2": 0.019214},
-            "simulation_note": "isolated at 200k shots per point, so the shot-noise "
-                               "floor (~0.0011 rad) is well below the residual",
-            "budget_formula": "systematic_rad = 0.002 + 1.0 * two_qubit_error",
-            "systematic_budget_rad": round(systematic, 6),
+            "direction": "no direction is predicted. See amendment 1: the original "
+                         "one-directional claim rested on a mechanism that does not "
+                         "hold, so the pass criterion is symmetric.",
+            "mechanism": "a depolarizing channel maps BOTH arms by the same affine "
+                         "rule, p -> (1-q)p + q*uniform, so the gain becomes "
+                         "(1-q)*gain_ideal. A positive rescaling cannot move a zero "
+                         "crossing. The earlier claim that the falling (dev,Q) curve "
+                         "is dragged down faster than the flat (Q,Q) curve is wrong: "
+                         "both are pulled toward 2.25 in the same proportion.",
+            "simulated_bias_by_channel": bias_channels,
+            "discretization_bias_rad": round(grid_bias, 9),
+            "largest_simulated_bias_rad": round(worst_bias, 9),
+            "simulation_note": "computed by quantum_games.ewl_device_bias, a "
+                               "density-matrix simulation of the same circuit, sweep "
+                               "and estimator. No sampling, so no shot-noise floor.",
+            "superseded_table": {
+                "values_rad": [0.003986, 0.007384, 0.019214],
+                "status": "withdrawn -- unreproducible",
+                "note": "attributed to simulation at 200k shots per point, but no code "
+                        "produced them and no channel tried here reproduces them; they "
+                        "are 5x to 100x larger than any simulated bias.",
+            },
         },
         "pass_criterion": {
             "primary": "|measured - predicted| <= 3*sigma_shot + systematic_budget",
@@ -143,9 +166,17 @@ def main():
                          "to whether the EWL threshold is correct. Both terms are fixed "
                          "here, in advance, and neither may be widened after the run.",
             "design_sigma_rad": round(sigma, 6),
-            "falsified_if": "the measured crossing lies outside the tolerance, lies "
-                            "materially ABOVE gamma_c (the bias direction is predicted), "
-                            "or no sign change is found in the swept range at all",
+            "symmetric": True,
+            "decision_rule": "PASS if and only if |measured - 0.684719203| <= "
+                             "0.026573 rad. FAIL otherwise, in either direction, "
+                             "including when no sign change is found in the swept "
+                             "range. There is no separate 'materially above' clause: "
+                             "amendment 1 removed the one-directional bias claim that "
+                             "would have justified an asymmetric rule.",
+            "no_sign_change_is": "FAIL",
+            "systematic_is_an_assumption": True,
+            "systematic_vs_largest_simulated_bias": round(
+                systematic / worst_bias, 2),
         },
         "declared": {
             "measurement_performed": False,

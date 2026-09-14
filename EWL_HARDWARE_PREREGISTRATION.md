@@ -9,12 +9,16 @@ Regenerate: `python3 -m quantum_games.ewl_prediction --out data/ewl_prediction.j
 ## The prediction
 
 `EWL_EQUILIBRIUM.md` derives, from the payoff matrix alone, that the quantum
-profile (Q,Q) becomes a Nash equilibrium of the quantised Prisoner's Dilemma
-above
+profile (Q,Q) becomes a **weak (non-strict) Nash equilibrium** of the quantised
+Prisoner's Dilemma above
 
 ```
 cos^2(gamma_c) = (R-S)/(T-S) = 3/5   ->   gamma_c = 0.684719203 rad
 ```
+
+The equilibrium is weak, not strict: at and above `gamma_c` the best available
+deviation *ties* with Q at exactly 3.0 rather than losing to it. Nothing strictly
+beats Q, and nothing is strictly beaten by it.
 
 The hardware run measures where a defector's payoff against a quantum
 cooperator falls through 3.0. **Predicted crossing: 0.684719203 rad.**
@@ -38,44 +42,70 @@ entanglement, then raise entanglement until it stops winning.
 
 ## Error budget
 
-Shot noise is **not** the whole budget. A real device biases this measurement,
-and pre-registering shot noise alone would set a criterion the hardware fails
-for reasons unrelated to whether the threshold is right.
-
 ```
 3 * sigma_shot        = 0.016573 rad     (8192 shots, from the analytic payoff spreads)
-systematic budget     = 0.010000 rad     (0.002 + 1.0 * two_qubit_error, at 8e-3)
+systematic allowance  = 0.010000 rad     (0.002 + 1.0 * two_qubit_error, at 8e-3)
 tolerance             = 0.026573 rad
 ```
 
-The systematic term was measured in simulation at 200k shots per point, so the
-shot-noise floor (~0.0011 rad) sits well below the residual:
+**The systematic allowance is an assumption, not a measurement.** See amendment 1.
+It is retained at its registered value so the criterion is not loosened, and
+`quantum_games.ewl_device_bias` shows it stays a conservative upper bound:
 
-| 2-qubit error | measured bias |
-|---|---|
-| 3e-3 | 0.003986 |
-| 8e-3 | 0.007384 |
-| 2e-2 | 0.019214 |
+| channel | bias at 3e-3 | bias at 8e-3 | bias at 2e-2 |
+|---|---:|---:|---:|
+| depolarizing | -0.000076 | -0.000076 | -0.000076 |
+| amplitude damping | -0.000145 | -0.000260 | -0.000535 |
+| readout | -0.000688 | -0.001708 | -0.004155 |
 
-**The bias is one-directional.** Depolarizing noise pulls both payoff curves
-toward the uniform-mixture value 2.25, and the falling (dev,Q) curve is dragged
-down faster than the flat (Q,Q) curve, moving the crossing left. So the measured
-crossing should land at or below gamma_c, never materially above it.
+The largest simulated bias on any channel is **0.004155 rad**, so the 0.010 rad
+allowance is 2.4x that. The depolarizing row is flat because it equals the
+41-point grid's own discretization bias: a depolarizing channel cannot move this
+crossing at all (amendment 1).
 
 ## Pass criterion
 
-**PASS if |measured − 0.684719203| <= 0.026573 rad.**
+**PASS if and only if `|measured - 0.684719203| <= 0.026573` rad.**
 
-Falsified if the crossing lies outside that tolerance, lies materially *above*
-gamma_c (the bias direction is predicted, so a high result is not a near miss —
-it is a wrong result), or if no sign change is found in the swept range.
+The rule is **symmetric and exhaustive**. Every other outcome is a FAIL:
+
+- `|measured - 0.684719203| > 0.026573` rad, in either direction;
+- no sign change found anywhere in the swept range.
+
+There is no "materially above" clause. The earlier text carried one, justified by
+a predicted one-directional bias; amendment 1 withdrew that prediction, so no
+asymmetry is justified and none is applied.
 
 Neither term of the tolerance may be widened after the run. If the device is
 worse than the assumed 8e-3 two-qubit error, the correct move is to re-register
 with that device's published error rate before running — not to re-derive the
 budget afterwards.
 
+## Run protocol, fixed in advance
+
+These were unspecified in the original registration and are fixed here, before
+any hardware use.
+
+| item | commitment |
+|---|---|
+| device selection | the IBM Quantum device with the **lowest published median two-qubit gate error** among those available to the account at submission time, subject to >= 2 qubits and support for the required basis gates. Ties broken by lowest median readout error, then alphabetically by device name. |
+| eligibility gate | the device's published median two-qubit error must be <= 8e-3, the registered assumption. If no available device qualifies, the run does not proceed under this registration; it is re-registered against the qualifying device's published rate. |
+| binding run | **the first eligible run is binding.** Its result is the result. |
+| number of runs | exactly one. |
+| calibration snapshot | the backend properties are fetched and committed **before** submission, and the reported median two-qubit error is taken from that snapshot. |
+| permitted discards | only for a documented *infrastructure* failure that produces no usable counts: job error, cancellation, timeout, or a returned shot count differing from 2 x 8192. A discarded job is recorded with its job id and the reason. A run that returns counts is never discarded, whatever it shows. |
+| forbidden | re-running after seeing a result, selecting among completed runs, changing the device after submission, or post-hoc recalibration of the budget. |
+
 ## Scope
+
+**This tests a hardware implementation against an analytic result. It is not a
+test of quantum cognition, Orch-OR, or any new physics, and it cannot discover
+anything about nature.** `gamma_c = arccos(sqrt(3/5))` follows by algebra from
+the payoff matrix and the restricted strategy set; it is not empirically at risk.
+If the measurement disagrees, the conclusion is that the device, the transpiled
+circuit, or the protocol is at fault — never that the threshold is wrong. What a
+PASS buys is evidence that this apparatus reproduces a known number under a
+budget fixed in advance; what a FAIL buys is a reason to debug the apparatus.
 
 This tests a 1999 game-theory result and a threshold derived from it. It says
 nothing about Orch-OR, consciousness, DAO governance, or human cooperation: the
@@ -83,3 +113,77 @@ nothing about Orch-OR, consciousness, DAO governance, or human cooperation: the
 on the restricted 2-parameter strategy set — Benjamin & Hayden (2001) show no
 pure equilibrium survives over full SU(2), which `EWL_EQUILIBRIUM.md`
 reproduces.
+
+
+---
+
+# Amendment 1 — 2026-09-14, before any hardware run
+
+## The defect
+
+The original registration justified its systematic allowance with a table of
+simulated device biases:
+
+| 2-qubit error | claimed bias |
+|---|---|
+| 3e-3 | 0.003986 |
+| 8e-3 | 0.007384 |
+| 2e-2 | 0.019214 |
+
+attributed to "simulation at 200k shots per point". **No code in this repository
+produced those numbers, and they could not be reconstructed.** They are withdrawn.
+
+Worse than unreproducible, the stated mechanism is wrong. The registration said
+depolarizing noise "pulls both payoff curves toward the uniform-mixture value
+2.25, and the falling (dev,Q) curve is dragged down faster than the flat (Q,Q)
+curve, moving the crossing left." A depolarizing channel maps every outcome
+distribution by the same affine rule,
+
+```
+p_noisy = (1 - q) * p_ideal + q * uniform
+```
+
+so each payoff becomes `(1 - q) * payoff_ideal + q * 2.25`. Both arms carry the
+same gate structure and therefore the same `q`, so the difference is
+`(1 - q) * gain_ideal` — a positive rescaling, which **cannot move a zero
+crossing**. The predicted leftward drag does not exist.
+
+Simulating it confirms this: under depolarizing noise the measured crossing is
+identical at 3e-3, 8e-3 and 2e-2, and equals the 41-point grid's own
+discretization bias of -0.000076 rad. Channels that are not a common affine map
+on both arms do move the crossing, but by far less than the withdrawn table:
+amplitude damping by at most 0.000535 rad, readout error by at most 0.004155 rad.
+
+## The correction
+
+1. `quantum_games/ewl_device_bias.py` computes all of the above from the same
+   circuit, sweep and estimator the hardware run will use. It is registered in
+   the ledger and regenerated in CI, so the numbers are checkable rather than
+   asserted.
+2. The systematic allowance is **relabelled as an assumption**. Its value is
+   unchanged at 0.010 rad, so the criterion is not loosened. The simulation shows
+   it is 2.4x the largest bias found on any channel.
+3. The pass criterion is now **symmetric and exhaustive**, and the vague
+   "materially above" clause is removed. Its only justification was the
+   one-directional bias claim withdrawn above.
+4. Device selection, run count, binding-run rule, calibration snapshot and
+   permitted discards are fixed in the run protocol table.
+5. The scope section states plainly that this tests an implementation against an
+   analytic result.
+6. The equilibrium is described as weak (non-strict).
+
+`gamma_c` is unchanged at 0.684719203 rad and the tolerance is unchanged at
+0.026573 rad. Nothing here makes the test easier to pass.
+
+## What remains an assumption
+
+The 0.010 rad allowance is now the least-supported number in this document. The
+evidence assembled here suggests a much smaller value would be defensible — the
+largest simulated bias is 0.004155 rad, and the most physically relevant channel
+moves the crossing not at all. Retaining 0.010 rad makes the criterion **more
+permissive than the evidence requires**, which is a limitation of this
+registration, not a strength. It is retained rather than tightened only because
+lowering a registered tolerance is still a change to a registered criterion, and
+the conservative reading is that a pre-run change should not be able to cut
+either way at the author's discretion. A future registration should derive the
+allowance from the device's own measured channel rather than assume it.

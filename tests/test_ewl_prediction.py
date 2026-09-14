@@ -86,9 +86,80 @@ def test_error_budget_includes_a_systematic_term(prediction):
     assert syst == pytest.approx(0.002 + 8e-3, abs=1e-9)
 
 
-def test_predicted_bias_direction_is_downward(prediction):
-    assert "below" in prediction["expected_device_bias"]["direction"].lower()
+def test_no_bias_direction_is_predicted(prediction):
+    """Amendment 1 withdrew the one-directional bias claim. Asserting a direction
+    again would re-justify an asymmetric pass rule that the evidence does not
+    support: depolarizing noise cannot move the crossing in either direction."""
+    direction = prediction["expected_device_bias"]["direction"].lower()
+    assert "no direction is predicted" in direction
 
 
 def test_declares_no_measurement_performed(prediction):
     assert prediction["declared"]["measurement_performed"] is False
+
+
+# --- amendment 1: the withdrawn bias table, and what replaced it ---------------
+
+
+def test_the_withdrawn_bias_literals_are_not_treated_as_measurements(prediction):
+    """0.003986 / 0.007384 / 0.019214 could not be reconstructed. They may appear
+    only as a withdrawn record, never as a live input to the budget."""
+    bias = prediction["expected_device_bias"]
+    assert bias["superseded_table"]["status"] == "withdrawn -- unreproducible"
+    assert "simulated_bias_by_channel" in bias
+    assert "measured_in_simulation" not in bias
+
+
+def test_depolarizing_noise_cannot_move_the_crossing():
+    """The registration's original mechanism, checked rather than asserted: a
+    depolarizing channel rescales the gain by (1-q) and cannot move its root."""
+    from quantum_games.ewl_device_bias import discretization_bias, measured_crossing
+    grid = discretization_bias()
+    for error in (3.0e-3, 8.0e-3, 2.0e-2):
+        crossing = measured_crossing(error, "depolarizing")
+        assert crossing - GAMMA_C == pytest.approx(grid, abs=1e-9)
+
+
+def test_simulated_bias_stays_below_the_systematic_allowance(prediction):
+    allowance = prediction["pass_criterion"]["components"]["systematic_budget_rad"]
+    assert prediction["expected_device_bias"]["largest_simulated_bias_rad"] < allowance
+
+
+def test_pass_criterion_is_symmetric_and_exhaustive(prediction):
+    pc = prediction["pass_criterion"]
+    assert pc["symmetric"] is True
+    assert pc["no_sign_change_is"] == "FAIL"
+    rule = pc["decision_rule"]
+    assert "if and only if" in rule
+    assert "no separate 'materially above' clause" in rule, \
+        "the vague clause must stay explicitly retired, not silently reappear"
+    assert "falsified_if" not in pc, "the old ambiguous key must not return"
+    assert pc["systematic_is_an_assumption"] is True
+
+
+def test_tolerance_was_not_loosened_by_the_amendment(prediction):
+    """Amendment 1 relabelled the systematic term; it must not have widened it."""
+    pc = prediction["pass_criterion"]
+    assert pc["tolerance_rad"] == pytest.approx(0.026573, abs=1e-6)
+    assert pc["components"]["systematic_budget_rad"] == pytest.approx(0.010, abs=1e-9)
+
+
+def test_run_protocol_commitments_are_documented():
+    """Device choice, binding run and discard policy were undisclosed degrees of
+    freedom; they must stay pinned in the registration."""
+    text = open(os.path.join(REPO, "EWL_HARDWARE_PREREGISTRATION.md"),
+                encoding="utf-8").read()
+    for phrase in ("the first eligible run is binding",
+                   "lowest published median two-qubit gate error",
+                   "calibration snapshot",
+                   "permitted discards",
+                   "exactly one"):
+        assert phrase in text, f"run protocol lost its commitment: {phrase}"
+
+
+def test_scope_denies_testing_new_physics():
+    text = open(os.path.join(REPO, "EWL_HARDWARE_PREREGISTRATION.md"),
+                encoding="utf-8").read()
+    assert "not a\ntest of quantum cognition" in text or \
+           "not a test of quantum cognition" in text.replace("\n", " ")
+    assert "weak (non-strict) Nash equilibrium" in text

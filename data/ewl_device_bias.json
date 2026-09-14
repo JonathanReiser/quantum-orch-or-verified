@@ -1,0 +1,57 @@
+{
+  "bias_by_channel": {
+    "amplitude_damping": {
+      "0.003": {
+        "bias_rad": -0.000145063,
+        "crossing_rad": 0.68457414
+      },
+      "0.008": {
+        "bias_rad": -0.00025997,
+        "crossing_rad": 0.684459233
+      },
+      "0.02": {
+        "bias_rad": -0.000535445,
+        "crossing_rad": 0.684183758
+      }
+    },
+    "depolarizing": {
+      "0.003": {
+        "bias_rad": -7.6082e-05,
+        "crossing_rad": 0.684643121
+      },
+      "0.008": {
+        "bias_rad": -7.6082e-05,
+        "crossing_rad": 0.684643121
+      },
+      "0.02": {
+        "bias_rad": -7.6082e-05,
+        "crossing_rad": 0.684643121
+      }
+    },
+    "readout": {
+      "0.003": {
+        "bias_rad": -0.000687994,
+        "crossing_rad": 0.684031209
+      },
+      "0.008": {
+        "bias_rad": -0.001707848,
+        "crossing_rad": 0.683011355
+      },
+      "0.02": {
+        "bias_rad": -0.004155495,
+        "crossing_rad": 0.680563708
+      }
+    }
+  },
+  "discretization_bias_rad": -7.6082e-05,
+  "estimator": "last sign change of payoff(dev,Q) - payoff(Q,Q), linearly interpolated between adjacent grid points",
+  "finding": {
+    "depolarizing_cannot_move_the_crossing": true,
+    "largest_bias_any_channel_rad": 0.004155495,
+    "supersedes": "the unreproducible table 0.003986 / 0.007384 / 0.019214 rad",
+    "why": "a depolarizing channel maps both arms by the same affine rule, p -> (1-q)p + q*uniform, so the gain becomes (1-q)*gain_ideal. A positive rescaling cannot move a zero crossing. The residual equals the discretization bias of the 41-point grid."
+  },
+  "gamma_c": 0.684719203,
+  "method": "density-matrix simulation; no sampling, so these are exact channel biases with no shot-noise floor to subtract",
+  "sweep_points": 41
+}

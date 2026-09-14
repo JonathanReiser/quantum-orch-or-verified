@@ -148,17 +148,19 @@
       "description": "EWL hardware threshold prediction and protocol, pinned BEFORE any hardware run. The commit timestamp is what makes the later measurement a test rather than a description.",
       "reproducible": true,
       "committed_output": "data/ewl_prediction.json",
-      "sha256": "0cc7e8af8dfee451ee971c3f7db55a9cb9fd77ab432bdcf48c32c83107597d8e",
+      "sha256": "1fd55fcbfa65c425e11632f8501d2c2d3b916797659bacb81fa3de476af034d3",
       "doc_claims": [
         {
           "file": "EWL_HARDWARE_PREREGISTRATION.md",
           "must_contain": [
             "gamma_c = 0.684719203 rad",
             "**Predicted crossing: 0.684719203 rad.**",
-            "**PASS if |measured \u2212 0.684719203| <= 0.026573 rad.**",
+            "**PASS if and only if `|measured - 0.684719203| <= 0.026573` rad.**",
             "3 * sigma_shot        = 0.016573 rad",
-            "systematic budget     = 0.010000 rad",
-            "| 2e-2 | 0.019214 |",
+            "systematic allowance  = 0.010000 rad",
+            "**The systematic allowance is an assumption, not a measurement.**",
+            "the first eligible run is binding",
+            "weak (non-strict) Nash equilibrium",
             "| estimator | last sign change of payoff(dev,Q) \u2212 payoff(Q,Q), linearly interpolated |"
           ]
         }
@@ -169,6 +171,29 @@
         "quantum_games.ewl_prediction",
         "--two-qubit-error",
         "8e-3",
+        "--out",
+        "{tmp}"
+      ]
+    },
+    {
+      "id": "ewl-device-bias",
+      "description": "Simulated device bias of the EWL crossing estimator, replacing the withdrawn literals 0.003986 / 0.007384 / 0.019214 (amendment 1).",
+      "reproducible": true,
+      "committed_output": "data/ewl_device_bias.json",
+      "sha256": "ace2f87e06f14d615d66d0db5f7b020aabfbc8492cc17a4adab596017541d950",
+      "note": "Density-matrix simulation, no sampling. Key finding: a depolarizing channel rescales the gain by (1-q) and cannot move its zero crossing, so the registration's original one-directional bias mechanism does not hold.",
+      "doc_claims": [
+        {
+          "file": "EWL_HARDWARE_PREREGISTRATION.md",
+          "must_contain": [
+            "The largest simulated bias on any channel is **0.004155 rad**"
+          ]
+        }
+      ],
+      "command": [
+        "python3",
+        "-m",
+        "quantum_games.ewl_device_bias",
         "--out",
         "{tmp}"
       ]
