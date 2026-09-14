@@ -1,0 +1,141 @@
+{
+  "declared": {
+    "measurement_performed": false,
+    "note": "This file must be committed before any hardware run. Its value is its timestamp: pinned after the fact it proves nothing."
+  },
+  "expected_at_threshold": {
+    "d_gain_d_gamma": -4.898979,
+    "note": "(Q,Q) is deterministic at every gamma -- the outcome is always CC, so on a noiseless device all shot noise comes from the (dev,Q) arm.",
+    "payoff_QQ": 3.0,
+    "payoff_devQ": 3.0,
+    "sd_QQ": 0.0,
+    "sd_devQ": 2.449489743
+  },
+  "expected_device_bias": {
+    "direction": "no direction is predicted. See amendment 1: the original one-directional claim rested on a mechanism that does not hold, so the pass criterion is symmetric.",
+    "discretization_bias_rad": -7.6082e-05,
+    "largest_simulated_bias_rad": 0.004155495,
+    "mechanism": "a depolarizing channel maps BOTH arms by the same affine rule, p -> (1-q)p + q*uniform, so the gain becomes (1-q)*gain_ideal. A positive rescaling cannot move a zero crossing. The earlier claim that the falling (dev,Q) curve is dragged down faster than the flat (Q,Q) curve is wrong: both are pulled toward 2.25 in the same proportion.",
+    "simulated_bias_by_channel": {
+      "amplitude_damping": {
+        "0.003": {
+          "bias_rad": -0.000145063,
+          "crossing_rad": 0.68457414
+        },
+        "0.008": {
+          "bias_rad": -0.00025997,
+          "crossing_rad": 0.684459233
+        },
+        "0.02": {
+          "bias_rad": -0.000535445,
+          "crossing_rad": 0.684183758
+        }
+      },
+      "depolarizing": {
+        "0.003": {
+          "bias_rad": -7.6082e-05,
+          "crossing_rad": 0.684643121
+        },
+        "0.008": {
+          "bias_rad": -7.6082e-05,
+          "crossing_rad": 0.684643121
+        },
+        "0.02": {
+          "bias_rad": -7.6082e-05,
+          "crossing_rad": 0.684643121
+        }
+      },
+      "readout": {
+        "0.003": {
+          "bias_rad": -0.000687994,
+          "crossing_rad": 0.684031209
+        },
+        "0.008": {
+          "bias_rad": -0.001707848,
+          "crossing_rad": 0.683011355
+        },
+        "0.02": {
+          "bias_rad": -0.004155495,
+          "crossing_rad": 0.680563708
+        }
+      }
+    },
+    "simulation_scope": {
+      "is_an_upper_bound_on_hardware_error": false,
+      "note": "each channel is applied uniformly to an idealised two-qubit circuit with ideal one-qubit gates. A real device can bias the crossing by MORE than any figure here, in either direction.",
+      "omits": [
+        "coherent and calibration error",
+        "crosstalk",
+        "pair-dependent and qubit-dependent error rates",
+        "drift between calibration and execution",
+        "leakage",
+        "correlated readout error",
+        "gates introduced by transpilation to a native basis"
+      ],
+      "purpose": "rule out the mechanism the original registration invoked; nothing more"
+    },
+    "superseded_table": {
+      "note": "attributed to simulation at 200k shots per point, but no code produced them and no channel tried here reproduces them; they are 5x to 100x larger than any simulated bias.",
+      "status": "withdrawn -- unreproducible",
+      "values_rad": [
+        0.003986,
+        0.007384,
+        0.019214
+      ]
+    }
+  },
+  "pass_criterion": {
+    "components": {
+      "systematic_budget_rad": 0.01,
+      "three_sigma_shot_rad": 0.016573
+    },
+    "decision_rule": "PASS if and only if |measured - 0.684719203| <= 0.026573 rad. FAIL otherwise, in either direction, including when no sign change is found in the swept range. There is no separate 'materially above' clause: amendment 1 removed the one-directional bias claim that would have justified an asymmetric rule.",
+    "design_sigma_rad": 0.005524,
+    "no_sign_change_is": "FAIL",
+    "primary": "|measured - predicted| <= 3*sigma_shot + systematic_budget",
+    "rationale": "shot noise alone is NOT the whole error budget: a real device biases the crossing downward by an amount comparable to the 3-sigma shot tolerance. Pre-registering shot noise only would have set a criterion the hardware fails for reasons unrelated to whether the EWL threshold is correct. Both terms are fixed here, in advance, and neither may be widened after the run.",
+    "symmetric": true,
+    "systematic_is_an_assumption": true,
+    "systematic_justified_by_simulation": false,
+    "systematic_support": "registered before the run; not derived from the illustrative channels, which do not bound device error",
+    "tolerance_rad": 0.026573,
+    "two_qubit_error_assumed": 0.008
+  },
+  "prediction": {
+    "derivation": "cos^2(gamma_c) = (R-S)/(T-S) = 3/5",
+    "gamma_c": 0.684719203,
+    "payoffs": {
+      "P": 1.0,
+      "R": 3.0,
+      "S": 0.0,
+      "T": 5.0
+    },
+    "source_doc": "EWL_EQUILIBRIUM.md"
+  },
+  "protocol_fixed_in_advance": {
+    "circuits_per_gamma": 2,
+    "deviation_strategy": {
+      "alpha": 0.0,
+      "is_classical_defect": true,
+      "payoff_at_gamma_0": 5.0,
+      "selected_at_gamma": 0.0,
+      "theta": 3.141592654,
+      "why": "at gamma=pi/2 the best reply to Q is Q, so an argmax taken there returns Q and the deviation gain is identically zero"
+    },
+    "estimator": "last sign change of (payoff(dev,Q) - payoff(Q,Q)), linearly interpolated between adjacent grid points",
+    "execution_stack_frozen": {
+      "eligibility_error_is": "the two-qubit gate error of the SELECTED PAIR, not the device median",
+      "error_mitigation": "none; raw counts, no post-selection",
+      "initial_layout": "fixed before submission to the lowest-two-qubit-error connected pair in the calibration snapshot, recorded as explicit physical qubit indices",
+      "optimization_level": 1,
+      "seed_transpiler": 20260914,
+      "versions_recorded_in": "calibration snapshot committed before submission"
+    },
+    "gamma_points": 41,
+    "gamma_range": [
+      0.0,
+      1.570796327
+    ],
+    "shots_per_circuit": 8192
+  }
+}
